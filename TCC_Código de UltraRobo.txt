@@ -1,0 +1,66 @@
+/*
+ * HCSR04Ultrasonic/examples/UltrasonicDemo/UltrasonicDemo.pde
+ *
+ * SVN Keywords
+ * ----------------------------------
+ * $Author: cnobile $
+ * $Date: 2011-09-17 02:43:12 -0400 (Sat, 17 Sep 2011) $
+ * $Revision: 29 $
+ * ----------------------------------
+ */
+
+#include <Ultrasonic.h>
+#include <Servo.h>
+
+Servo myservo;
+
+int pos = 0;
+
+#define TRIGGER_PIN  12
+#define ECHO_PIN     13
+
+Ultrasonic ultrasonic(TRIGGER_PIN, ECHO_PIN);
+
+void setup()
+  {
+  Serial.begin(9600);
+  myservo.attach(9);
+  }
+
+void loop()
+  {
+  float cmMsec, inMsec;
+  long microsec = ultrasonic.timing();
+
+  cmMsec = ultrasonic.convert(microsec, Ultrasonic::CM);
+  inMsec = ultrasonic.convert(microsec, Ultrasonic::IN);
+  Serial.print("MS: ");
+  Serial.print(microsec);
+  Serial.print(", CM: ");
+  Serial.println(cmMsec);
+  //Inchies = Polegadas
+ // Serial.print(", IN: ");
+ // Serial.println(inMsec);
+  delay(1000);
+
+/*Se a distância for menor que 15cm, o servo irá parar*/
+  if(cmMsec < 15)
+  {
+    Serial.println("aqui");
+    //myservo.detach();
+   }
+   //Caso seja maior, ele irá executar.
+   else
+   {
+    for (pos = 0; pos <= 90; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+  for (pos = 90; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+    
+    }
+  }
